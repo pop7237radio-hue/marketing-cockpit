@@ -1,0 +1,1268 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1f2a24" />
+  <title>マーケ実践コックピット</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f2ea;
+      --panel: #fffdf7;
+      --ink: #1d2521;
+      --muted: #66716b;
+      --line: #ded7c8;
+      --deep: #1f2a24;
+      --green: #2f6f5e;
+      --blue: #335f8f;
+      --amber: #b7792d;
+      --rose: #b65656;
+      --shadow: 0 18px 42px rgba(36, 34, 28, .14);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "YuGothic", "Noto Sans JP", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--ink); }
+    body { padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+    button, input, textarea { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    .app {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(245, 242, 234, .92);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(222, 215, 200, .8);
+      padding: 14px 16px 10px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(22px, 5.8vw, 34px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .progress-ring {
+      width: 58px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: conic-gradient(var(--green) var(--angle), #e7e0d1 0);
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+    }
+    .progress-ring span {
+      width: 44px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--panel);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--green);
+    }
+
+    .tabs {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .tab {
+      border: 1px solid var(--line);
+      background: rgba(255, 253, 247, .74);
+      color: var(--muted);
+      border-radius: 8px;
+      min-height: 42px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .tab.active {
+      background: var(--deep);
+      color: #fff;
+      border-color: var(--deep);
+    }
+
+    main {
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-card {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .meta-row, .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      background: #ebe5d7;
+      color: #445047;
+      border: 1px solid #d9d0bd;
+    }
+    .pill.green { background: #e4f0ea; color: #28634e; border-color: #c9ded4; }
+    .pill.blue { background: #e3ebf4; color: #2f587f; border-color: #c9d9e8; }
+    .pill.amber { background: #f2e6d4; color: #8f5c20; border-color: #e4ca9f; }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(24px, 6vw, 36px);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+    p { margin: 0; line-height: 1.75; }
+    .lead { color: #38443e; font-size: 15px; }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .info-box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 13px;
+      background: #fffaf0;
+      min-height: 136px;
+    }
+    .info-box p, .info-box li { color: #3f4b45; font-size: 14px; }
+    .info-box ul { margin: 0; padding-left: 19px; line-height: 1.7; }
+
+    .practice {
+      border: 1px solid #bfd7cb;
+      background: #edf7f2;
+      padding: 14px;
+      border-radius: 8px;
+    }
+    .practice h3 { color: var(--green); }
+
+    textarea, input[type="search"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 12px;
+      outline: none;
+    }
+    textarea { min-height: 130px; resize: vertical; line-height: 1.7; }
+    textarea:focus, input[type="search"]:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(47, 111, 94, .15);
+    }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .action-btn, .small-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 8px;
+      min-height: 44px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .action-btn.done { background: var(--green); color: #fff; border-color: var(--green); }
+    .action-btn.hold { background: var(--amber); color: #fff; border-color: var(--amber); }
+    .action-btn.later { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .small-btn { min-height: 38px; padding: 0 12px; }
+
+    .nav-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .nav-btn {
+      min-height: 50px;
+      border: 0;
+      border-radius: 8px;
+      font-weight: 900;
+      color: #fff;
+      cursor: pointer;
+      background: var(--deep);
+    }
+    .nav-btn.secondary { background: #6b6a61; }
+
+    .lesson-list {
+      display: grid;
+      gap: 10px;
+    }
+    .lesson-item {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 13px;
+      display: grid;
+      gap: 7px;
+      cursor: pointer;
+    }
+    .lesson-item.active { border-color: var(--green); box-shadow: 0 0 0 3px rgba(47, 111, 94, .15); }
+    .lesson-title { font-weight: 900; line-height: 1.45; }
+    .lesson-summary { color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #c9c2b4;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    .status-dot.done { background: var(--green); }
+    .status-dot.hold { background: var(--amber); }
+    .status-dot.later { background: var(--blue); }
+
+    .hidden { display: none !important; }
+    .empty {
+      color: var(--muted);
+      padding: 22px;
+      text-align: center;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.45);
+    }
+
+    footer {
+      padding: 0 16px 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 720px) {
+      header { padding-left: 12px; padding-right: 12px; }
+      main { padding: 12px; }
+      .section-grid { grid-template-columns: 1fr; }
+      .tabs { gap: 6px; }
+      .tab { font-size: 13px; }
+      .action-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title-row">
+        <div>
+          <h1>マーケ実践コックピット</h1>
+          <p class="subtitle">STEP1根っこから、リストマーケまで。読む教材を「今日の1実践」に変える自分用アプリ。</p>
+        </div>
+        <div class="progress-ring" id="progressRing" style="--angle:0deg"><span id="progressText">0%</span></div>
+      </div>
+      <nav class="tabs" aria-label="表示切り替え">
+        <button class="tab active" data-tab="today">今日</button>
+        <button class="tab" data-tab="lessons">一覧</button>
+        <button class="tab" data-tab="search">検索</button>
+        <button class="tab" data-tab="log">ログ</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="todayView" class="view">
+        <article class="panel hero-card" id="lessonCard"></article>
+      </section>
+
+      <section id="lessonsView" class="view hidden">
+        <div class="panel hero-card">
+          <h2>最初のセット</h2>
+          <p class="lead">最初は「根っこ」から始めます。リストマーケはSTEP4。箱より先に、誰にどんな変化を届けるかを決める順番です。</p>
+          <div class="lesson-list" id="lessonList"></div>
+        </div>
+      </section>
+
+      <section id="searchView" class="view hidden">
+        <div class="panel hero-card">
+          <h2>検索</h2>
+          <input type="search" id="searchInput" placeholder="例: LINE / note / 購入者 / PD-Helper / 嫌な未来" />
+          <div class="lesson-list" id="searchResults"></div>
+        </div>
+      </section>
+
+      <section id="logView" class="view hidden">
+        <div class="panel hero-card">
+          <div class="meta-row">
+            <h2 style="flex:1">実践ログ</h2>
+            <button class="small-btn" id="exportBtn">JSON保存</button>
+          </div>
+          <p class="lead">完了・保留・あとでにしたカードと、メモをここで見返します。</p>
+          <div class="lesson-list" id="logList"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      このアプリは個人学習用です。教材本文の転載ではなく、保存済みナレッジを要約・実践化したカードとして扱います。外部投稿、LINE/メルマガ送信、決済リンク設置は人間確認。
+    </footer>
+  </div>
+
+  <script>
+    const lessons = [
+      {
+        id: 1,
+        phase: "明鏡入口",
+        title: "不満と悩みを見る",
+        source: "明鏡由来パターン / コピー4ステップ",
+        summary: [
+          "マーケは最初に商品ではなく、相手の不満や悩みを見る。",
+          "機能説明から始めると、自分は気持ちいいが相手は動かない。",
+          "まず、相手が日常で止まっている場面を1つだけ言葉にする。"
+        ],
+        example: "PD-Helperなら「腹膜透析の記録を毎日つけたいのに、紙とスマホと記憶がバラバラになる」が入口。",
+        practice: "PD-Helperを必要とする人が、夜または朝に困っている場面を1つ書く。",
+        prompt: "誰が、いつ、何に困っている？その時の独り言は？",
+        quiz: "最初に見るのは商品機能ではなく、相手の何？",
+        tags: ["悩み", "コピー", "PD-Helper", "入口"]
+      },
+      {
+        id: 2,
+        phase: "明鏡入口",
+        title: "放置した先の嫌な未来",
+        source: "明鏡由来パターン / コピー4ステップ",
+        summary: [
+          "悩みは、放置した時の不安まで見えると強くなる。",
+          "煽るためではなく、本人が避けたい未来を正確に言語化する。",
+          "嫌な未来は大げさにせず、生活の中の小さな困りごとに落とす。"
+        ],
+        example: "記録が雑になると、看護師さんに説明する時に思い出せず、自分も家族も不安になる。",
+        practice: "昨日書いた困りごとを放置したら何が面倒になるか、1つだけ書く。",
+        prompt: "この困りごとを1か月放置したら、誰がどんな確認で困る？",
+        quiz: "嫌な未来は、煽るためではなく何のために書く？",
+        tags: ["嫌な未来", "不安", "コピー", "医療判断なし"]
+      },
+      {
+        id: 3,
+        phase: "明鏡入口",
+        title: "望む状態を一言で置く",
+        source: "明鏡由来パターン / コピー4ステップ",
+        summary: [
+          "悩みと嫌な未来だけでは、人は疲れる。",
+          "次に、相手が欲しい未来を一言で置く。",
+          "理想は大きな成功ではなく、今日の生活が少し楽になる状態でよい。"
+        ],
+        example: "PD-Helperなら「記録を探さず、スマホ1つで今日の状態を見せられる」。",
+        practice: "PD-Helper利用後の理想を、15文字から30文字で1つ書く。",
+        prompt: "使った人は、何を探さなくてよくなる？何を説明しやすくなる？",
+        quiz: "理想状態は、派手な成功より何に近い方が刺さる？",
+        tags: ["理想", "ベネフィット", "生活補助"]
+      },
+      {
+        id: 4,
+        phase: "明鏡入口",
+        title: "商品につながるコピーを作る",
+        source: "明鏡由来パターン / コピー4ステップ",
+        summary: [
+          "コピーはかっこいい言葉ではなく、悩みから商品へ橋をかける言葉。",
+          "悩み、嫌な未来、理想、商品を1本の線でつなぐ。",
+          "最初は1文で十分。盛らずに、誰の何が楽になるかを書く。"
+        ],
+        example: "紙の記録で説明に困る腹膜透析の方へ。毎日の記録をスマホでまとめて、共有しやすくする生活補助アプリ。",
+        practice: "PD-Helperの説明文を1文だけ作る。医療判断ではないことも含める。",
+        prompt: "誰の、どんな記録が、どう楽になる？",
+        quiz: "コピーは商品説明ではなく、何から何への橋？",
+        tags: ["コピー", "商品説明", "PD-Helper"]
+      },
+      {
+        id: 5,
+        phase: "明鏡入口",
+        title: "PASONAで1枚にまとめる",
+        source: "明鏡由来パターン / PASONA",
+        summary: [
+          "PASONAは、悩みから行動までの流れを崩さないための型。",
+          "Problem、Affinity、Solution、Offer、Narrowing、Actionで整理する。",
+          "えいちゃんは押し売りでなく、適合確認のために使う。"
+        ],
+        example: "Problem: 記録が散らかる。Affinity: 自分も腹膜透析で困った。Solution: スマホ記録。Offer: 小さなアプリ。Narrowing: 腹膜透析の記録補助が欲しい方。Action: 概要を見る。",
+        practice: "PD-HelperをPASONAの6行で書く。",
+        prompt: "P/A/S/O/N/Aを各1行で。強い煽りは禁止。",
+        quiz: "えいちゃんがPASONAで避けるべきことは？",
+        tags: ["PASONA", "LP", "note", "販売ページ"]
+      },
+      {
+        id: 6,
+        phase: "媒体理解",
+        title: "SNSメディアの役割を分ける",
+        source: "明鏡由来パターン / SNSメディア使い分け",
+        summary: [
+          "媒体は同じ文章を置く箱ではなく、役割が違う。",
+          "X短文は認知、X長文は教育、noteは検索と信頼、Substackは継続接触。",
+          "役割を分けると、横展開で脳を使いすぎなくなる。"
+        ],
+        example: "今日の投稿待ち箱は、noteを本体、Xを入口、Substackを保存版に分けた。これが媒体役割の実例。",
+        practice: "PD-Helperの発信を、X短文・note・Substackで役割分けする。",
+        prompt: "Xで何を知ってもらう？noteで何を信じてもらう？Substackで何を続けて届ける？",
+        quiz: "X短文とnoteは同じ役割？",
+        tags: ["X", "note", "Substack", "横展開"]
+      },
+      {
+        id: 7,
+        phase: "導線設計",
+        title: "バックエンドから逆算する",
+        source: "明鏡由来パターン / コンテンツ逆算ルール",
+        summary: [
+          "SNS投稿は単発で考えない。最後にどんな関係を作りたいかから逆算する。",
+          "バックエンドは高額商品だけでなく、相談、継続支援、紹介、次商品でもよい。",
+          "出口が曖昧だと、投稿が増えても事業にならない。"
+        ],
+        example: "PD-Helperの出口は、販売だけでなく、患者さんの声、医療者からの意見、設定サポート、紹介元との関係がある。",
+        practice: "PD-Helperを見た人に、次に取ってほしい行動を1つ決める。",
+        prompt: "今ほしいのは購入？感想？紹介？改善意見？",
+        quiz: "投稿は何から逆算する？",
+        tags: ["バックエンド", "導線", "PD-Helper"]
+      },
+      {
+        id: 8,
+        phase: "導線設計",
+        title: "買うべきでない人を決める",
+        source: "明鏡由来パターン / コンテンツ逆算ルール",
+        summary: [
+          "信頼を作るには、買ってほしい人だけでなく、合わない人も明確にする。",
+          "合わない人に売ると、サポート負荷と不満が増える。",
+          "えいちゃんの導線は、適合確認を前に出すと誠実になる。"
+        ],
+        example: "PD-Helperは医療判断を任せたい人、病院の正式記録を置き換えたい人、スマホ操作が極端に苦手で支援がない人には合いにくい。",
+        practice: "PD-Helperをすすめない人を3つ書く。",
+        prompt: "誰に売らないと、長く信頼が残る？",
+        quiz: "合わない人を明記するのは売上を落とすため？",
+        tags: ["信頼", "合わない人", "リスク"]
+      },
+      {
+        id: 9,
+        phase: "リスト入口",
+        title: "SNSはきっかけ、リストは接点",
+        source: "おさるBM690 / SNSとリスト2層構造",
+        summary: [
+          "SNSのフォロワーは、次の投稿が必ず届く相手ではない。",
+          "SNSは発見される場所。リストは、こちらから届けられる接点。",
+          "SNSで反応が出た時に、次の接点を用意しておく。"
+        ],
+        example: "XでPD-Helperに反応した人に、note記事、概要ページ、DM許可、Substack登録など次の接点を用意する。",
+        practice: "今あるSNS接点から、次に残せる接点を1つ選ぶ。",
+        prompt: "Xで反応した人を、どこへ自然に案内する？",
+        quiz: "SNSは資産そのもの？それともきっかけ？",
+        tags: ["SNS", "リスト", "接点"]
+      },
+      {
+        id: 10,
+        phase: "リスト入口",
+        title: "無料リストと購入者リストを分ける",
+        source: "おさるBM690 / 2層構造",
+        summary: [
+          "無料で読んでくれる人と、お金を払った人は温度が違う。",
+          "無料リストは関係作り、購入者リストは満足度と次提案の土台。",
+          "低単価でも購入者は、ただの読者とは別の大切な接点になる。"
+        ],
+        example: "noteを読む人は無料接触。PD-Helperを買う人、試す人、感想をくれる人は購入者または利用者接点として別に見る。",
+        practice: "PD-Helperの無料接触と購入者接触を分けて書く。",
+        prompt: "無料でつながる場所は？購入後につながる場所は？",
+        quiz: "無料読者と購入者を同じ扱いにしてよい？",
+        tags: ["無料リスト", "購入者リスト", "LTV"]
+      },
+      {
+        id: 11,
+        phase: "リスト媒体",
+        title: "公式LINEは個別最適化",
+        source: "おさるBM624 / リストマーケ4媒体",
+        summary: [
+          "公式LINEは、登録日や状況に応じた案内、問い合わせ、購入後フォローに向く。",
+          "一斉配信を大量に回すより、個別最適化や相談窓口として強い。",
+          "配信数、費用、個人情報、同意の確認が必要。"
+        ],
+        example: "PD-Helperなら、購入前質問、設定サポート、家族への説明、看護師さんへ見せる手順案内に向く。",
+        practice: "公式LINEを使うなら、最初の用途を1つだけ決める。",
+        prompt: "案内？相談？設定サポート？購入後フォロー？",
+        quiz: "公式LINEは大量一斉配信だけの道具？",
+        tags: ["公式LINE", "個別最適化", "相談"]
+      },
+      {
+        id: 12,
+        phase: "リスト媒体",
+        title: "オプチャは同時熱量と第三者証明",
+        source: "おさるBM624 / BM360",
+        summary: [
+          "オプチャは、同じ場で感想や質問が見えることが価値。",
+          "大型ローンチや期間限定企画では熱量を作りやすい。",
+          "ただし、荒れ対策、外部リンク、商品案内頻度、管理ルールが先。"
+        ],
+        example: "えいちゃんの場合は大規模オプチャより、週1の実践報告や小さな勉強会の質問回収からが安全。",
+        practice: "オプチャを今やるなら、場の目的と禁止事項を1つずつ書く。",
+        prompt: "何のための場？何を禁止する？外部リンクはどう扱う？",
+        quiz: "オプチャは作れば勝手に集客してくれる？",
+        tags: ["オプチャ", "場作り", "ローンチ"]
+      },
+      {
+        id: 13,
+        phase: "リスト媒体",
+        title: "メルマガは長期接触の本線",
+        source: "おさるBM679 / BM624",
+        summary: [
+          "メルマガは、長期価値提供と企画誘導に向く。",
+          "持っているだけでは資産ではなく、読まれる習慣まで含めて資産。",
+          "ステップ配信、同意、解除、到達率、特商法の確認が必要。"
+        ],
+        example: "PD-Helperなら、透析記録の工夫、家族共有、看護師さんへの見せ方など、週1の生活改善メールが合う。",
+        practice: "もし週1メルマガを出すなら、最初の3通のテーマを決める。",
+        prompt: "初回で何を信じてもらう？2通目で何を助ける？3通目で何を聞く？",
+        quiz: "メルマガは登録者がいるだけで資産？",
+        tags: ["メルマガ", "長期接触", "信頼"]
+      },
+      {
+        id: 14,
+        phase: "リスト媒体",
+        title: "Substackは週1ログと読者資産",
+        source: "明鏡ベース / BM361 / BM435 / BM477",
+        summary: [
+          "SubstackはXの代替ではなく、メールで届く継続メディアとして見る。",
+          "最初から有料化せず、週1の実践ログで読者との接点を育てる。",
+          "開封、クリック、返信、欲しい声を見て次を決める。"
+        ],
+        example: "えいちゃんは、透析日でも止まらないAI実践ログ、PD-Helper改善ログ、Roblox制作の学びを週1で置ける。",
+        practice: "Substackで週1にするなら、最初の連載名を1つ決める。",
+        prompt: "毎週、何の途中経過なら無理なく出せる？",
+        quiz: "Substackは毎日売り込む場所として始める？",
+        tags: ["Substack", "週1ログ", "読者資産"]
+      },
+      {
+        id: 15,
+        phase: "購入者入口",
+        title: "低単価は利益より購入体験",
+        source: "おさるBM692 / 低単価と購入者リスト",
+        summary: [
+          "低単価商品は、利益商品ではなく購入体験と購入者接点を作る入口にもなる。",
+          "ただし、プラットフォーム規約、手数料、返金、個人情報、PR表記は確認が必要。",
+          "えいちゃんは売上煽りではなく、小さな満足と声を集める目的で考える。"
+        ],
+        example: "PD-Helperや学校連絡テンプレは、低単価で購入体験を作り、感想と改善点を集める入口になりうる。",
+        practice: "低単価商品を1つ置くなら、購入後に何を渡すと満足が増えるか書く。",
+        prompt: "購入後の不安を1つ減らす追加物は？使い方動画？チェックリスト？設定サポート？",
+        quiz: "低単価商品の目的は、初回から大きく儲けることだけ？",
+        tags: ["低単価", "購入者リスト", "Brain", "note"]
+      },
+      {
+        id: 16,
+        phase: "実践統合",
+        title: "PD-Helper導線を1枚にする",
+        source: "えいちゃん実践ログ / 明鏡・おさる統合",
+        summary: [
+          "最後は学んだ概念を、自分の1商品に戻す。",
+          "悩み、コピー、媒体、無料接点、購入者接点、フォローを1枚で見る。",
+          "ここまで書けると、次に何を作るか迷いにくくなる。"
+        ],
+        example: "Xで当事者の困りごとを出す。noteで信頼記事を書く。概要ページで医療判断ではないと明記する。購入後は使い方と感想回収へつなぐ。",
+        practice: "PD-Helperの導線を、入口から購入後まで6行で書く。",
+        prompt: "X -> note -> 概要 -> 購入/利用 -> 共有 -> 感想回収、の各行を書く。",
+        quiz: "学習のゴールは知識を増やすこと？それとも導線が1つ見えること？",
+        tags: ["PD-Helper", "導線", "統合", "実践"]
+      }
+    ];
+
+    lessons.length = 0;
+    lessons.push(...[
+      {
+        id: 1,
+        phase: "STEP1 根っこ",
+        title: "マーケの本質",
+        source: "CC v2 / 明鏡準拠",
+        summary: [
+          "マーケは小手先テクではなく、人の心を震わせ、変化を届ける事業活動すべて。",
+          "枝葉のテクニックより先に、誰にどんな変化を渡すかを決める。",
+          "ここがないと、バズっても売れても続かない。"
+        ],
+        example: "えいちゃんの本体は、透析や時間制約があってもAIで生活と仕事を少し前に進める実演。PD-Helperもその一部。",
+        practice: "自分が誰にどんな変化を届けたいか、1行で書く。",
+        prompt: "誰の、どんな止まり方を、どんな状態へ変えたい？",
+        quiz: "マーケの本質は、テクニック集め？それとも変化を届ける活動？",
+        tags: ["根っこ", "変化", "マーケ本質"]
+      },
+      {
+        id: 2,
+        phase: "STEP1 根っこ",
+        title: "情熱を掘り起こす",
+        source: "CC v2 / 明鏡準拠",
+        summary: [
+          "稼げるかだけで選ぶと、途中で息切れしやすい。",
+          "10年後も、お金に関係なく売り続けたいテーマを探す。",
+          "自分が本当に必要として作ったものは、言葉に熱が残る。"
+        ],
+        example: "PD-Helperは、えいちゃん自身が腹膜透析の記録で困ったから作った。ここに情熱の根っこがある。",
+        practice: "お金を抜きにしても続けたいテーマを1つ書く。",
+        prompt: "自分が困ってきたからこそ、他人にも渡したいものは？",
+        quiz: "情熱の源泉は、流行りのジャンルだけで決まる？",
+        tags: ["情熱", "PD-Helper", "継続"]
+      },
+      {
+        id: 3,
+        phase: "STEP1 根っこ",
+        title: "煽り売りは自滅",
+        source: "CC v2 / 明鏡準拠",
+        summary: [
+          "根っこがないまま売ると、未来の信頼を前借りする煽り売りに寄りやすい。",
+          "短期の反応より、長く残る信頼を優先する。",
+          "数字保証や過剰な不安作りは、えいちゃんのブランドと相性が悪い。"
+        ],
+        example: "PD-Helperは医療判断を約束しない。生活記録を少し楽にする道具として、できることとできないことを明記する。",
+        practice: "自分が絶対に使わない煽り表現を1つ決める。",
+        prompt: "自分の発信で、言わないと決める強すぎる言葉は？",
+        quiz: "短期売上のために、信頼を前借りしてよい？",
+        tags: ["信頼", "煽り禁止", "安全"]
+      },
+      {
+        id: 4,
+        phase: "STEP2 商品設計",
+        title: "コンセプトは誰の何をどう変えるか",
+        source: "CC v2 / おさる式一次情報",
+        summary: [
+          "コンセプトは、自分の肩書きではなく相手の変化を言う。",
+          "誰の、何を、どう変えるかが決まると発信が止まりにくい。",
+          "AIで量産する前に、この幹を太くする。"
+        ],
+        example: "制約があってもAIで倒れず続けたい人へ、日々の作業を小さな仕組みに変える。",
+        practice: "誰に・何を・どんな変化、を1行で書く。",
+        prompt: "対象、困りごと、変化後の状態を1文にすると？",
+        quiz: "コンセプトは集客より先？後？",
+        tags: ["コンセプト", "商品設計", "一次情報"]
+      },
+      {
+        id: 5,
+        phase: "STEP2 商品設計",
+        title: "顧客の生の声DBを作る",
+        source: "CC v2 / おさるBM285",
+        summary: [
+          "商品コピーは、自分の綺麗な言葉より顧客の生の言葉から作る。",
+          "相談、リプ、DM、感想、困りごとを素材として保存する。",
+          "AIはその生の言葉を媒体別に翻訳する係。"
+        ],
+        example: "透析、在宅、介護、学校連絡などで出る『面倒』『不安』『説明しにくい』の実際の言葉を集める。",
+        practice: "読者が言いそうな悩みフレーズを3つメモする。",
+        prompt: "読者はきれいな言葉ではなく、普段どんな独り言を言う？",
+        quiz: "コピーの材料は、自分の頭だけで作る？",
+        tags: ["生の声", "コピー", "DB"]
+      },
+      {
+        id: 6,
+        phase: "STEP2 商品設計",
+        title: "痛み止め商品を設計する",
+        source: "CC v2 / 明鏡準拠",
+        summary: [
+          "商品は『あったらいいな』より『ないと困る痛み』を消す方が強い。",
+          "痛み止めは、今すぐの面倒や不安を減らす。",
+          "最初の商品は広げすぎず、1つの痛みに絞る。"
+        ],
+        example: "PD-Helperは、手書き記録の面倒、共有時の説明しにくさ、在庫や体調の散らばりを減らす痛み止め。",
+        practice: "自分の商品が消す痛みを1つ言語化する。",
+        prompt: "それがないと、誰が何で困り続ける？",
+        quiz: "最初の商品は、便利機能を全部盛る方がよい？",
+        tags: ["痛み止め", "商品", "PD-Helper"]
+      },
+      {
+        id: 7,
+        phase: "STEP2 商品設計",
+        title: "なぜコンセプトが集客より先か",
+        source: "CC v2 / 明鏡準拠",
+        summary: [
+          "コンセプト未定のまま発信すると、何を言えばよいか分からなくなる。",
+          "AI量産は、幹がないと薄い投稿を増やしてブランドを壊す。",
+          "発信前に、誰に何を届けるかを点検する。"
+        ],
+        example: "今日の『イラレがAIになった日』は、AI一般論ではなく、えいちゃんの広報経験と判断の価値に接続している。",
+        practice: "直近の発信がコンセプトに沿っているか1つ点検する。",
+        prompt: "その投稿は、誰のどんな変化へつながっている？",
+        quiz: "AIで速く作れるなら、コンセプトなしで量産してよい？",
+        tags: ["コンセプト", "集客前", "AI量産注意"]
+      },
+      {
+        id: 8,
+        phase: "STEP3 集客",
+        title: "媒体の役割分担",
+        source: "CC v2 / 明鏡メディア使い分け",
+        summary: [
+          "媒体は同じ文章を置く箱ではなく、役割が違う。",
+          "Xは入口、noteは信頼、Substackは継続接触、LINEやメルマガは教育に向く。",
+          "役割を分けると、横展開で脳を使いすぎなくなる。"
+        ],
+        example: "投稿待ち箱では、noteを本体、Xを入口、Substackを保存版に分けた。",
+        practice: "自分の媒体を入口・受け皿・販売/教育に仕分ける。",
+        prompt: "X、note、Substack、将来LINEはそれぞれ何の役割？",
+        quiz: "媒体は全部同じ目的で使う？",
+        tags: ["X", "note", "Substack", "役割分担"]
+      },
+      {
+        id: 9,
+        phase: "STEP3 集客",
+        title: "一次情報と魂を乗せる",
+        source: "CC v2 / おさる・明鏡統合",
+        summary: [
+          "プロンプトだけで作った無難な文は、読者の手を止めにくい。",
+          "体験、失敗、制約、実績の一次情報があると発信に熱が乗る。",
+          "AIは文章を整えるが、魂は本人の具体から入る。"
+        ],
+        example: "『イラレがAIになった日』は、10年以上前の広報制作経験があるから強い。",
+        practice: "直近投稿に自分の一次情報が入っているか点検する。",
+        prompt: "この投稿に、えいちゃんだけが言える具体はある？",
+        quiz: "AIだけで整えた文章に、本人の具体は必要ない？",
+        tags: ["一次情報", "魂", "発信"]
+      },
+      {
+        id: 10,
+        phase: "STEP3 集客",
+        title: "入口投稿の唯一の仕事は興味",
+        source: "CC v2 / 明鏡準拠",
+        summary: [
+          "入口投稿でいきなり売らない。",
+          "最初の仕事は『もっと知りたい』を作ること。",
+          "1投稿1メッセージに絞ると、読者が迷いにくい。"
+        ],
+        example: "PD-Helperなら、最初から販売リンクではなく『紙の記録で説明に困った話』を出す。",
+        practice: "投稿が興味を作れているか1つ見直す。",
+        prompt: "この投稿のあと、読者は何をもっと知りたくなる？",
+        quiz: "入口投稿の仕事は、即購入させること？",
+        tags: ["入口投稿", "興味", "売らない"]
+      },
+      {
+        id: 11,
+        phase: "STEP3 集客",
+        title: "フォロワーは借り物の土地",
+        source: "おさるBM690 / イケハヤBM441",
+        summary: [
+          "フォロワー数は社会的証明にはなるが、次の投稿が必ず届くわけではない。",
+          "SNSはきっかけで、直接届く接点は別に作る。",
+          "リストは、自分側に残る接触資産として見る。"
+        ],
+        example: "いいねをくれる人は大事な兆し。ただし、次に連絡できる場や保存できる接点がないと流れてしまう。",
+        practice: "今、直接連絡できる人が何人いるか数える。",
+        prompt: "X以外で、えいちゃんから届けられる接点はある？",
+        quiz: "フォロワーは完全に自分の資産？",
+        tags: ["フォロワー", "リスト", "接点"]
+      },
+      {
+        id: 12,
+        phase: "STEP4 リスト化",
+        title: "リストマーケはなぜここか",
+        source: "CC v2 / 明鏡順序",
+        summary: [
+          "リストマーケは、根っこと商品の幹ができてから機能する。",
+          "順番を飛ばして配信だけ作ると、AIが書いたお世辞だらけになりやすい。",
+          "集客、登録、教育、成約のうち、リストは後ろ3つを支える。"
+        ],
+        example: "えいちゃんは今、PD-Helperと発信の幹を太くしながら、次の接点を準備する段階。",
+        practice: "今STEP1からSTEP5のどこにいるか印をつける。",
+        prompt: "根っこ、商品、集客、リスト、オファーのどこが一番弱い？",
+        quiz: "商品やコンセプトが弱いまま、配信だけ作ると強くなる？",
+        tags: ["順番", "リストマーケ", "教育"]
+      },
+      {
+        id: 13,
+        phase: "STEP4 リスト化",
+        title: "売上方程式の4要素",
+        source: "CC v2 / 明鏡準拠",
+        summary: [
+          "売上は、集客数、登録率、教育率、成約率の掛け算で見る。",
+          "どれか1つが弱いと全体が伸びにくい。",
+          "いま直す場所を1つに絞ると、迷いが減る。"
+        ],
+        example: "PD-Helperなら、今は集客数よりも『興味を持った人が次に何を見るか』の登録率/接点作りが弱い可能性がある。",
+        practice: "4要素のうち、今いちばん弱い1つを決める。",
+        prompt: "集客数、登録率、教育率、成約率。今どこが詰まっている？",
+        quiz: "売上が弱い時、全部同時に直すべき？",
+        tags: ["売上方程式", "KPI", "弱点"]
+      },
+      {
+        id: 14,
+        phase: "STEP4 リスト化",
+        title: "リストは庭園型メディア",
+        source: "CC v2 / 明鏡・おさる統合",
+        summary: [
+          "リストは、アルゴリズムに支配されにくい自分側の接点。",
+          "LINE、メルマガ、Substackなどは同じ箱ではなく役割が違う。",
+          "庭のように手入れして、信頼を育てる場所として扱う。"
+        ],
+        example: "PD-Helper読者を、Xの一時反応で終わらせず、週1ログや概要ページ、将来LINEへつなぐ。",
+        practice: "最初に使うリスト先を1つ選ぶ。",
+        prompt: "えいちゃんにとって、最初に無理なく続けられる庭はどこ？",
+        quiz: "リストは作った瞬間に資産になる？",
+        tags: ["庭園型", "LINE", "メルマガ", "Substack"]
+      },
+      {
+        id: 15,
+        phase: "STEP4 リスト化",
+        title: "無料プレゼントでリスト化",
+        source: "CC v2 / 明鏡準拠",
+        summary: [
+          "無料プレゼントは、無料だから強いのではなく、今すぐ欲しいから強い。",
+          "チェックリスト、テンプレ、ミニ診断など、1つの困りごとを軽くするものが向く。",
+          "受け取った後の次行動まで考える。"
+        ],
+        example: "PD-Helperなら、腹膜透析記録の見直しチェックリストや、看護師さんへ見せる項目メモが候補。",
+        practice: "配れる無料プレゼント案を1つ書く。",
+        prompt: "読者が今日保存したくなる小さな資料は？",
+        quiz: "無料プレゼントは、量が多ければ多いほどよい？",
+        tags: ["無料特典", "リスト化", "チェックリスト"]
+      },
+      {
+        id: 16,
+        phase: "STEP4 リスト化",
+        title: "誘導文の型",
+        source: "CC v2 / 明鏡準拠",
+        summary: [
+          "誘導文は、悩み指定、遠回りや損失、無料で得る変化、導線の順で作る。",
+          "限定は使うなら本当に理由がある時だけ。",
+          "えいちゃんは強い煽りより、低圧で自然な誘導が合う。"
+        ],
+        example: "手書き記録が大変な人へ。説明で困る前に、共有項目だけ整理できる無料チェックリストを置きました。",
+        practice: "この型で誘導文を1本下書きする。",
+        prompt: "誰の悩み？何を避ける？無料で何が楽になる？どこへ行く？",
+        quiz: "誘導文は、リンクだけ貼れば伝わる？",
+        tags: ["誘導文", "CTA", "無料特典"]
+      },
+      {
+        id: 17,
+        phase: "STEP4 リスト化",
+        title: "信頼残高を積む",
+        source: "CC v2 / 明鏡準拠",
+        summary: [
+          "リストに入っても、すぐ売るだけでは信頼が減る。",
+          "無料でも役に立つ情報を出し切り、読者の不安を減らす。",
+          "信頼残高が増えると、次の提案が自然になる。"
+        ],
+        example: "PD-Helperなら、使い方だけでなく、記録の見せ方、家族共有、続ける工夫を出す。",
+        practice: "出し切れる価値を1つ書く。",
+        prompt: "無料でも渡せる、読者の不安を1つ減らす情報は？",
+        quiz: "登録後すぐ売り込み続けると、信頼は増える？",
+        tags: ["信頼残高", "教育", "価値提供"]
+      },
+      {
+        id: 18,
+        phase: "STEP4 リスト化",
+        title: "固定挨拶と仮想敵",
+        source: "CC v2 / 明鏡準拠",
+        summary: [
+          "場の価値を固定挨拶で定義すると、読者がここにいる理由を理解しやすい。",
+          "仮想敵は人ではなく、薄い煽り情報や誤った考え方に置く。",
+          "読者に『探していた場所』と思ってもらう。"
+        ],
+        example: "えいちゃんの仮想敵は『AIで簡単に稼げる』という雑な煽り。誠実な実践ログで差別化する。",
+        practice: "自分の仮想敵を1つ言語化する。",
+        prompt: "誰を攻撃せず、どんな考え方から読者を守る？",
+        quiz: "仮想敵は特定個人にした方がよい？",
+        tags: ["仮想敵", "場作り", "信頼"]
+      },
+      {
+        id: 19,
+        phase: "STEP5 オファー",
+        title: "売ってから作る",
+        source: "CC v2 / 明鏡準拠",
+        summary: [
+          "完成品を作り切ってから売るより、少人数に約束して並走しながら作る方法がある。",
+          "先に声を聞くことで、不要なものを作り込みにくい。",
+          "モニターや試用者と一緒に育てる。"
+        ],
+        example: "PD-Helperも、数人に見てもらって『的外れでないか』意見をもらう流れが合う。",
+        practice: "声をかけられそうな人を3名リストアップする。",
+        prompt: "買ってくださいではなく、見て意見をくれそうな人は？",
+        quiz: "初期商品は、誰にも見せず完璧にしてから出すべき？",
+        tags: ["モニター", "並走制作", "改善"]
+      },
+      {
+        id: 20,
+        phase: "STEP5 オファー",
+        title: "オファーは自然に本気の人だけ",
+        source: "CC v2 / 明鏡準拠",
+        summary: [
+          "信頼が溜まってから、軽く背中を押す。",
+          "合わない人を無理に動かさない。",
+          "『見たい人だけどうぞ』くらいの低圧さが、えいちゃんには合う。"
+        ],
+        example: "DMも価格やリンクを初回で出さず、『概要を送ってもいいですか』で止める方が自然。",
+        practice: "売り込まないオファー文を1行書く。",
+        prompt: "必要な人だけが手を上げられる一文は？",
+        quiz: "全員を今すぐ動かす強い圧が必要？",
+        tags: ["オファー", "低圧", "適合確認"]
+      },
+      {
+        id: 21,
+        phase: "STEP5 オファー",
+        title: "全部の本質",
+        source: "CC v2 / 明鏡準拠",
+        summary: [
+          "リストを取る、信頼を作る、欲しいものを提供する。",
+          "この順番は飛ばせない。",
+          "焦って売るより、今いる段階を見極める。"
+        ],
+        example: "今のえいちゃんは、PD-Helper、note、X、投稿待ち箱、DM下書きがそろい始めた段階。焦らず順に積む。",
+        practice: "今いる段階に印をつける。",
+        prompt: "今やるべきは、集客、リスト、教育、オファーのどれ？",
+        quiz: "信頼を作る前に売り続けると、長く続く？",
+        tags: ["順番", "本質", "信頼"]
+      },
+      {
+        id: 22,
+        phase: "STEP2 商品設計",
+        title: "悩みから嫌な未来、理想へ",
+        source: "Codex v1統合 / コピーライティング",
+        summary: [
+          "読者の悩みを見る。",
+          "放置した嫌な未来を見せる。",
+          "その先に理想の未来を置く。この三段で心が動く。"
+        ],
+        example: "手書き記録が大変。記録が抜けて共有でヒヤッとする。ワンタップで共有できる安心へ。",
+        practice: "読者の悩み、嫌な未来、理想を3行で書く。",
+        prompt: "困りごと、放置した結果、望む状態を1行ずつ。",
+        quiz: "悩みだけで終えるより、何まで見せると動きやすい？",
+        tags: ["悩み", "嫌な未来", "理想", "コピー"]
+      },
+      {
+        id: 23,
+        phase: "STEP2 商品設計",
+        title: "バックエンド逆算",
+        source: "Codex v1統合 / 導線設計",
+        summary: [
+          "入口商品からではなく、最終的に届けたい本命から逆算する。",
+          "本命は高額商品だけでなく、個別カスタマイズ、伴走、紹介、継続支援でもよい。",
+          "出口があると、入口で何を言うかが決まる。"
+        ],
+        example: "本命が個別カスタマイズや設定伴走なら、PD-Helperは入口、相談は橋渡し、改善支援が次になる。",
+        practice: "最終的に届けたい本命を1つ決める。",
+        prompt: "入口の先で、本当に助けたい深い問題は何？",
+        quiz: "入口商品だけ見て導線を決めてよい？",
+        tags: ["バックエンド", "逆算", "導線"]
+      },
+      {
+        id: 24,
+        phase: "STEP3 集客",
+        title: "PASONAでコピーを書く",
+        source: "Codex v1統合 / PASONA",
+        summary: [
+          "Problem、Agitation、Solution、Narrow、Actionの順で書く。",
+          "Agitationは煽りではなく、共感を深掘りする場所として使う。",
+          "投稿や誘導文を型で点検すると、言いたいことが散らばりにくい。"
+        ],
+        example: "記録が散らかる。説明時に不安になる。スマホでまとめる。腹膜透析の記録補助が欲しい方へ。概要を見る。",
+        practice: "1投稿をPASONAの順で書き直す。",
+        prompt: "問題、共感深掘り、解決、対象、行動を各1行で。",
+        quiz: "PASONAのAgitationは、不安を煽り散らすため？",
+        tags: ["PASONA", "投稿", "誘導文"]
+      },
+      {
+        id: 25,
+        phase: "STEP4 リスト化",
+        title: "無料リストと購入者リストは別物",
+        source: "Codex v1統合 / おさるBM690・BM692",
+        summary: [
+          "無料でつながった人と、お金を払った人は温度が違う。",
+          "低単価商品は売上だけでなく、購入者接点を作る役割がある。",
+          "それぞれ次に何をしてほしいかを分けて設計する。"
+        ],
+        example: "PD-Helperを見た人は無料接触。小さく買った人や使った人は購入者/利用者接点。次に渡すものを変える。",
+        practice: "無料接触と購入者を分け、それぞれ次にしてほしい行動を1つ決める。",
+        prompt: "無料の人には何を届ける？購入者には何を届ける？",
+        quiz: "無料読者と購入者に同じ案内をしてよい？",
+        tags: ["無料リスト", "購入者リスト", "低単価", "LTV"]
+      }
+    ]);
+
+    const storageKey = "ei_marketing_cockpit_v1";
+    const state = loadState();
+    let currentLessonId = state.currentLessonId || 1;
+    let activeTab = "today";
+
+    const tabButtons = document.querySelectorAll(".tab");
+    const views = {
+      today: document.getElementById("todayView"),
+      lessons: document.getElementById("lessonsView"),
+      search: document.getElementById("searchView"),
+      log: document.getElementById("logView")
+    };
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener("click", () => setTab(btn.dataset.tab));
+    });
+
+    document.getElementById("searchInput").addEventListener("input", renderSearch);
+    document.getElementById("exportBtn").addEventListener("click", exportState);
+
+    renderAll();
+
+    function loadState() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey)) || { notes: {}, status: {}, currentLessonId: 1 };
+      } catch {
+        return { notes: {}, status: {}, currentLessonId: 1 };
+      }
+    }
+
+    function saveState() {
+      state.currentLessonId = currentLessonId;
+      localStorage.setItem(storageKey, JSON.stringify(state));
+      renderProgress();
+    }
+
+    function setTab(tab) {
+      activeTab = tab;
+      tabButtons.forEach(btn => btn.classList.toggle("active", btn.dataset.tab === tab));
+      Object.entries(views).forEach(([key, el]) => el.classList.toggle("hidden", key !== tab));
+      if (tab === "lessons") renderLessonList();
+      if (tab === "search") renderSearch();
+      if (tab === "log") renderLog();
+    }
+
+    function renderAll() {
+      renderLessonCard();
+      renderLessonList();
+      renderSearch();
+      renderLog();
+      renderProgress();
+    }
+
+    function getLesson(id) {
+      return lessons.find(lesson => lesson.id === Number(id)) || lessons[0];
+    }
+
+    function renderLessonCard() {
+      const lesson = getLesson(currentLessonId);
+      const status = state.status[lesson.id] || "";
+      const note = state.notes[lesson.id] || "";
+      const card = document.getElementById("lessonCard");
+      card.innerHTML = `
+        <div class="meta-row">
+          <span class="pill green">${lesson.phase}</span>
+          <span class="pill blue">Day ${lesson.id} / ${lessons.length}</span>
+          <span class="pill amber">${statusLabel(status)}</span>
+        </div>
+        <h2>${escapeHtml(lesson.title)}</h2>
+        <p class="lead">${escapeHtml(lesson.source)}</p>
+        <div class="section-grid">
+          <div class="info-box">
+            <h3>3行要約</h3>
+            <ul>${lesson.summary.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+          </div>
+          <div class="info-box">
+            <h3>えいちゃんへの適用</h3>
+            <p>${escapeHtml(lesson.example)}</p>
+          </div>
+        </div>
+        <div class="practice">
+          <h3>今日の実践</h3>
+          <p>${escapeHtml(lesson.practice)}</p>
+        </div>
+        <div class="info-box">
+          <h3>問い</h3>
+          <p>${escapeHtml(lesson.prompt)}</p>
+        </div>
+        <label>
+          <h3>実践メモ</h3>
+          <textarea id="memoBox" placeholder="ここに今日の答えを書く">${escapeHtml(note)}</textarea>
+        </label>
+        <div class="info-box">
+          <h3>思い出しクイズ</h3>
+          <p>${escapeHtml(lesson.quiz)}</p>
+        </div>
+        <div class="tag-row">
+          ${lesson.tags.map(tag => `<span class="pill">${escapeHtml(tag)}</span>`).join("")}
+        </div>
+        <div class="action-row">
+          <button class="action-btn done" data-status="done">やった</button>
+          <button class="action-btn hold" data-status="hold">保留</button>
+          <button class="action-btn later" data-status="later">あとで</button>
+        </div>
+        <div class="nav-row">
+          <button class="nav-btn secondary" id="prevBtn">前へ</button>
+          <button class="nav-btn" id="nextBtn">次へ</button>
+        </div>
+      `;
+      document.getElementById("memoBox").addEventListener("input", (event) => {
+        state.notes[lesson.id] = event.target.value;
+        saveState();
+      });
+      card.querySelectorAll(".action-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.status[lesson.id] = btn.dataset.status;
+          saveState();
+          renderLessonCard();
+          renderLessonList();
+          renderLog();
+        });
+      });
+      document.getElementById("prevBtn").addEventListener("click", () => moveLesson(-1));
+      document.getElementById("nextBtn").addEventListener("click", () => moveLesson(1));
+    }
+
+    function moveLesson(delta) {
+      const next = currentLessonId + delta;
+      currentLessonId = Math.min(lessons.length, Math.max(1, next));
+      saveState();
+      renderLessonCard();
+      renderLessonList();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderLessonList() {
+      const list = document.getElementById("lessonList");
+      list.innerHTML = lessons.map(lesson => lessonButton(lesson)).join("");
+      list.querySelectorAll(".lesson-item").forEach(btn => {
+        btn.addEventListener("click", () => selectLesson(btn.dataset.id));
+      });
+    }
+
+    function renderSearch() {
+      const input = document.getElementById("searchInput");
+      const q = (input.value || "").trim().toLowerCase();
+      const results = document.getElementById("searchResults");
+      const filtered = q
+        ? lessons.filter(lesson => JSON.stringify(lesson).toLowerCase().includes(q))
+        : lessons;
+      results.innerHTML = filtered.length
+        ? filtered.map(lesson => lessonButton(lesson)).join("")
+        : `<div class="empty">該当するカードがありません。</div>`;
+      results.querySelectorAll(".lesson-item").forEach(btn => {
+        btn.addEventListener("click", () => selectLesson(btn.dataset.id));
+      });
+    }
+
+    function renderLog() {
+      const logList = document.getElementById("logList");
+      const logged = lessons.filter(lesson => state.status[lesson.id] || state.notes[lesson.id]);
+      logList.innerHTML = logged.length
+        ? logged.map(lesson => {
+          const status = state.status[lesson.id] || "";
+          const note = state.notes[lesson.id] || "メモなし";
+          return `
+            <button class="lesson-item" data-id="${lesson.id}">
+              <div class="lesson-title"><span class="status-dot ${status}"></span>Day ${lesson.id}: ${escapeHtml(lesson.title)}</div>
+              <div class="lesson-summary">${escapeHtml(statusLabel(status))}</div>
+              <div class="lesson-summary">${escapeHtml(note).replace(/\n/g, "<br>")}</div>
+            </button>
+          `;
+        }).join("")
+        : `<div class="empty">まだ実践ログはありません。今日のカードにメモを書くとここに残ります。</div>`;
+      logList.querySelectorAll(".lesson-item").forEach(btn => {
+        btn.addEventListener("click", () => selectLesson(btn.dataset.id));
+      });
+    }
+
+    function renderProgress() {
+      const doneCount = lessons.filter(lesson => state.status[lesson.id] === "done").length;
+      const percent = Math.round((doneCount / lessons.length) * 100);
+      document.getElementById("progressRing").style.setProperty("--angle", `${percent * 3.6}deg`);
+      document.getElementById("progressText").textContent = `${percent}%`;
+    }
+
+    function lessonButton(lesson) {
+      const status = state.status[lesson.id] || "";
+      return `
+        <button class="lesson-item ${lesson.id === currentLessonId ? "active" : ""}" data-id="${lesson.id}">
+          <div class="meta-row">
+            <span class="pill green">${escapeHtml(lesson.phase)}</span>
+            <span class="pill blue">Day ${lesson.id}</span>
+          </div>
+          <div class="lesson-title"><span class="status-dot ${status}"></span>${escapeHtml(lesson.title)}</div>
+          <div class="lesson-summary">${escapeHtml(lesson.summary[0])}</div>
+        </button>
+      `;
+    }
+
+    function selectLesson(id) {
+      currentLessonId = Number(id);
+      saveState();
+      renderLessonCard();
+      renderLessonList();
+      setTab("today");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function statusLabel(status) {
+      if (status === "done") return "完了";
+      if (status === "hold") return "保留";
+      if (status === "later") return "あとで";
+      return "未着手";
+    }
+
+    function exportState() {
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        app: "マーケ実践コックピット",
+        lessons: lessons.map(lesson => ({
+          id: lesson.id,
+          title: lesson.title,
+          status: state.status[lesson.id] || "",
+          note: state.notes[lesson.id] || ""
+        }))
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "marketing-cockpit-log.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "マーケ実践コックピット",
+  "short_name": "マーケ実践",
+  "description": "読む教材を、毎日1つのマーケ実践へ変える個人学習アプリ。",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f2ea",
+  "theme_color": "#1f2a24",
+  "orientation": "portrait"
+}
